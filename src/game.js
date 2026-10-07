@@ -62,14 +62,34 @@
       this.context = null;
       this.buffers = new Map();
       this.muted = readSaved("prismcoil.muted", "false") === "true";
+      this.musicMuted = readSaved("prismcoil.musicMuted", "false") === "true";
+      this.musicBuffer = null;
+      this.musicSource = null;
+      this.musicGain = null;
+      this.musicActive = false;
       this.lastReward = 0;
       this.refreshButton();
+      this.refreshMusicButton();
     }
     unlock() {
       const AudioContext = window.AudioContext || window.webkitAudioContext;
       if (!AudioContext) return;
       if (!this.context) {
         this.context = new AudioContext();
+        this.musicGain = this.context.createGain();
+        this.musicGain.gain.value = this.musicMuted ? 0 : 0.25;
+        this.musicGain.connect(this.context.destination);
+        fetch("assets/audio/background.mp3")
+          .then((response) => (response.ok ? response.arrayBuffer() : null))
+          .then((data) => data && this.context.decodeAudioData(data))
+          .then((buffer) => {
+            if (!buffer) return;
+            this.musicBuffer = buffer;
+            this.playMusic();
+          })
+          .catch(() => {
+            /* An unavailable music file must not interrupt the sound effects. */
+          });
         for (const name of ["reward", "damage", "end"]) {
           fetch(`assets/audio/${name}.mp3`)
             .then((response) => (response.ok ? response.arrayBuffer() : null))
@@ -94,9 +114,56 @@
       $("sound-toggle").classList.toggle("muted", this.muted);
       $("sound-toggle").setAttribute(
         "aria-label",
-        this.muted ? "Unmute sound" : "Mute sound",
+        this.muted ? "Unmute sound effects" : "Mute sound effects",
       );
       $("sound-toggle").setAttribute("aria-pressed", String(this.muted));
+    }
+    startMusic() {
+      this.stopMusic();
+      this.musicActive = true;
+      this.unlock();
+      this.playMusic();
+    }
+    playMusic() {
+      // Loading may finish after death or Home; only the current round can play.
+      if (!this.musicActive || !this.musicBuffer || this.musicSource) return;
+      const source = this.context.createBufferSource();
+      source.buffer = this.musicBuffer;
+      source.loop = true;
+      source.connect(this.musicGain);
+      this.musicSource = source;
+      source.onended = () => {
+        source.disconnect();
+        if (this.musicSource === source) this.musicSource = null;
+      };
+      source.start(0, 0);
+    }
+    stopMusic() {
+      this.musicActive = false;
+      const source = this.musicSource;
+      this.musicSource = null;
+      if (!source) return;
+      source.onended = null;
+      source.stop();
+      source.disconnect();
+    }
+    toggleMusic() {
+      this.unlock();
+      this.musicMuted = !this.musicMuted;
+      if (this.musicGain)
+        this.musicGain.gain.value = this.musicMuted ? 0 : 0.25;
+      save("prismcoil.musicMuted", this.musicMuted);
+      this.refreshMusicButton();
+    }
+    refreshMusicButton() {
+      const button = $("music-toggle");
+      button.classList.toggle("muted", this.musicMuted);
+      const label = this.musicMuted
+        ? "Unmute background music"
+        : "Mute background music";
+      button.setAttribute("aria-label", label);
+      button.setAttribute("title", label);
+      button.setAttribute("aria-pressed", String(this.musicMuted));
     }
     play(name) {
       const ctx = this.context;
@@ -425,6 +492,7 @@
       $("resume-button").addEventListener("click", () => this.togglePause());
       $("pause-button").addEventListener("click", () => this.togglePause());
       $("sound-toggle").addEventListener("click", () => audio.toggle());
+      $("music-toggle").addEventListener("click", () => audio.toggleMusic());
       for (const chip of document.querySelectorAll(".color-chip")) {
         chip.addEventListener("click", () => {
           chosenColor = Number(chip.dataset.color);
@@ -499,6 +567,7 @@
       }
     }
     home() {
+      audio.stopMusic();
       this.state = "menu";
       this.resetWorld(true);
       document.body.classList.remove("playing");
@@ -518,7 +587,7 @@
       $("pickup-toast").classList.remove("show");
     }
     start() {
-      audio.unlock();
+      audio.startMusic();
       this.state = "playing";
       this.resetWorld();
       document.body.classList.add("playing");
@@ -892,6 +961,7 @@
       this.burst(snake.x, snake.y, snake.color, snake.isPlayer ? 38 : 20, 180);
       this.destroySnake(snake);
       if (snake.isPlayer) {
+        audio.stopMusic();
         this.state = "over";
         this.clearBoost();
         this.cameras.main.stopFollow();

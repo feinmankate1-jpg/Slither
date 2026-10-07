@@ -42,6 +42,8 @@ assets/audio/end.mp3     # Game Over appears
 
 Audio is initialized and resumed only after a click, tap, or keyboard interaction. A Web Audio tone fallback covers decoding failures. Use short effects (especially reward.mp3), with modest loudness. Sound can be muted; simultaneous rewards are rate-limited.
 
+`assets/audio/background.mp3` contains the supplied ElevenLabs background music. It starts on Start, loops at 25% volume, stops immediately on player death or returning Home, and restarts from the beginning each new round. The music-note button independently mutes/unmutes music and remembers your preference. The speaker button and M shortcut continue to control only sound effects.
+
 ## Project structure
 
 ```text

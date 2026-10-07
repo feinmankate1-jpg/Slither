@@ -18,7 +18,7 @@
     />
     <link rel="stylesheet" href="style.css" />
     <script defer src="assets/vendor/phaser.min.js"></script>
-    <script defer src="src/game.js"></script>
+    <script defer src="src/game.js?v=background-music"></script>
   </head>
   <body>
     <main id="app">
@@ -57,8 +57,8 @@
           ><button
             id="sound-toggle"
             class="icon-button"
-            aria-label="Mute sound"
-            title="Toggle sound (M)"
+            aria-label="Mute sound effects"
+            title="Toggle sound effects (M)"
           >
             <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
               <path
@@ -73,6 +73,38 @@
                 stroke="currentColor"
                 stroke-width="1.6"
                 stroke-linecap="round"
+              />
+            </svg></button
+          ><button
+            id="music-toggle"
+            class="icon-button"
+            aria-label="Mute background music"
+            title="Mute background music"
+            aria-pressed="false"
+          >
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path
+                d="M9 18V6l10-3v12M9 10l10-3"
+                stroke="currentColor"
+                stroke-width="1.6"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+              <ellipse
+                cx="6"
+                cy="18"
+                rx="3"
+                ry="2"
+                stroke="currentColor"
+                stroke-width="1.6"
+              />
+              <ellipse
+                cx="16"
+                cy="15"
+                rx="3"
+                ry="2"
+                stroke="currentColor"
+                stroke-width="1.6"
               />
             </svg></button
           ><button
