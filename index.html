@@ -1,0 +1,433 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#09151c" />
+    <meta
+      name="description"
+      content="Prismcoil: a colorful snake survival arcade. Gather sparks, find your flow, and outlast the glow."
+    />
+    <title>Prismcoil — Chase the glow.</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%2309151c'/%3E%3Cpath d='M18 43V25a10 10 0 0 1 20 0v14a8 8 0 0 0 16 0' fill='none' stroke='%236ceac0' stroke-width='10' stroke-linecap='round'/%3E%3C/svg%3E"
+    />
+    <link rel="stylesheet" href="style.css" />
+    <script defer src="assets/vendor/phaser.min.js"></script>
+    <script defer src="src/game.js"></script>
+  </head>
+  <body>
+    <main id="app">
+      <div id="game" aria-label="Prismcoil snake survival arena"></div>
+      <div class="vignette" aria-hidden="true"></div>
+
+      <header class="topbar">
+        <a class="brand" href="./" aria-label="Prismcoil home">
+          <svg
+            class="brand-icon"
+            viewBox="0 0 32 32"
+            fill="none"
+            aria-hidden="true"
+          >
+            <path
+              d="M6 24V11a6 6 0 0 1 12 0v10a4 4 0 0 0 8 0v-6"
+              stroke="currentColor"
+              stroke-width="4"
+              stroke-linecap="round"
+            />
+            <circle cx="26" cy="13" r="3" fill="currentColor" />
+          </svg>
+          <span>prismcoil<span class="brand-dot">.</span></span>
+        </a>
+        <div id="score-hud" class="score-hud hidden">
+          <div>
+            <span class="hud-label">SPARKS</span><strong id="score">0</strong>
+          </div>
+          <span class="hud-divider"></span>
+          <div>
+            <span class="hud-label">BEST</span><strong id="hud-best">0</strong>
+          </div>
+        </div>
+        <div class="top-actions">
+          <span class="live-pill"><i></i> SOLO ARENA</span
+          ><button
+            id="sound-toggle"
+            class="icon-button"
+            aria-label="Mute sound"
+            title="Toggle sound (M)"
+          >
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path
+                d="M11 5 6 9H3v6h3l5 4V5Z"
+                stroke="currentColor"
+                stroke-width="1.6"
+                stroke-linejoin="round"
+              />
+              <path
+                class="sound-waves"
+                d="M15 8c2 2 2 6 0 8m3-11c4 4 4 10 0 14"
+                stroke="currentColor"
+                stroke-width="1.6"
+                stroke-linecap="round"
+              />
+            </svg></button
+          ><button
+            id="pause-button"
+            class="icon-button hidden"
+            aria-label="Pause game"
+            title="Pause (P or Escape)"
+          >
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path
+                d="M8 5v14M16 5v14"
+                stroke="currentColor"
+                stroke-width="3"
+                stroke-linecap="round"
+              />
+            </svg>
+          </button>
+        </div>
+      </header>
+
+      <section id="start-screen" class="start-screen">
+        <div class="intro">
+          <div class="eyebrow">
+            <span class="tiny-star"
+              ><svg
+                class="inline-icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                aria-hidden="true"
+              >
+                <path
+                  d="M12 3v18M3 12h18M5.6 5.6l12.8 12.8M5.6 18.4 18.4 5.6"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                /></svg
+            ></span>
+            A LITTLE CHAOS. A LOT OF COLOR.
+          </div>
+          <h1>Chase<br />the <em>glow.</em></h1>
+          <p class="intro-copy">
+            Find your flow. Feed your curiosity.<br />Become the brightest thing
+            in the arena.
+          </p>
+          <div class="palette-row">
+            <span>YOUR COLOR</span>
+            <div class="palette" role="group" aria-label="Snake color">
+              <button
+                class="color-chip selected"
+                data-color="0x6ceac0"
+                style="--chip: #6ceac0"
+                aria-label="Mint"
+                aria-pressed="true"
+              ></button
+              ><button
+                class="color-chip"
+                data-color="0xffb65e"
+                style="--chip: #ffb65e"
+                aria-label="Tangerine"
+                aria-pressed="false"
+              ></button
+              ><button
+                class="color-chip"
+                data-color="0xeb86c6"
+                style="--chip: #eb86c6"
+                aria-label="Rose"
+                aria-pressed="false"
+              ></button
+              ><button
+                class="color-chip"
+                data-color="0xa69bff"
+                style="--chip: #a69bff"
+                aria-label="Lilac"
+                aria-pressed="false"
+              ></button
+              ><button
+                class="color-chip"
+                data-color="0x79cfff"
+                style="--chip: #79cfff"
+                aria-label="Sky"
+                aria-pressed="false"
+              ></button>
+            </div>
+          </div>
+          <button id="start-button" class="primary-button">
+            Enter the arena
+            <span aria-hidden="true"
+              ><svg
+                class="inline-icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                aria-hidden="true"
+              >
+                <path
+                  d="M5 19 19 5M5 5h14v14"
+                  stroke="currentColor"
+                  stroke-width="1.7"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                /></svg
+            ></span>
+          </button>
+          <p class="start-hint">Click or press <kbd>SPACE</kbd> to start</p>
+          <div class="personal-best">
+            <span aria-hidden="true"
+              ><svg
+                class="inline-icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                aria-hidden="true"
+              >
+                <path
+                  d="M7 4h10v6a5 5 0 0 1-10 0V4Zm0 2H4v3a4 4 0 0 0 4 4m9-7h3v3a4 4 0 0 1-4 4m-4 2v5m-4 0h8"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                  stroke-linejoin="round"
+                  stroke-linecap="round"
+                /></svg
+            ></span>
+            YOUR PERSONAL BEST <strong id="start-best">0</strong
+            ><span class="unit">sparks</span>
+          </div>
+        </div>
+        <div class="arena-caption" aria-hidden="true">
+          <span class="caption-line"></span
+          ><span
+            >MEET YOUR NEXT OBSESSION<br /><b
+              >One more spark. One more round.</b
+            ></span
+          >
+        </div>
+        <div class="how-to">
+          <article>
+            <span class="instruction-icon"
+              ><svg
+                class="inline-icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                aria-hidden="true"
+              >
+                <path
+                  d="M5 19 19 5M5 5h14v14"
+                  stroke="currentColor"
+                  stroke-width="1.7"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                /></svg
+            ></span>
+            <div>
+              <h2>Find your flow</h2>
+              <p>Move your mouse or drag to steer.</p>
+            </div>
+          </article>
+          <article>
+            <span class="instruction-icon">ϟ</span>
+            <div>
+              <h2>Make your move</h2>
+              <p>Hold click, Space, or Boost to surge.</p>
+            </div>
+          </article>
+          <article>
+            <span class="instruction-icon"
+              ><svg
+                class="inline-icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                aria-hidden="true"
+              >
+                <path
+                  d="M12 3v18M3 12h18M5.6 5.6l12.8 12.8M5.6 18.4 18.4 5.6"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                /></svg
+            ></span>
+            <div>
+              <h2>Stay in the glow</h2>
+              <p>Eat sparks. Avoid bodies and the rim.</p>
+            </div>
+          </article>
+        </div>
+        <div class="home-footer">
+          <span>AN ENDLESS CHASE. AN ORIGINAL ARCADE.</span
+          ><span
+            >NO TWO ROUNDS ALIKE
+            <span class="footer-star"
+              ><svg
+                class="inline-icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                aria-hidden="true"
+              >
+                <path
+                  d="M12 3v18M3 12h18M5.6 5.6l12.8 12.8M5.6 18.4 18.4 5.6"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                /></svg></span
+          ></span>
+        </div>
+      </section>
+
+      <aside
+        id="leaderboard"
+        class="leaderboard hidden"
+        aria-label="Arena leaderboard"
+      >
+        <div class="leaderboard-title">
+          THE BRIGHTEST
+          <span
+            ><svg
+              class="inline-icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              aria-hidden="true"
+            >
+              <path
+                d="M5 19 19 5M5 5h14v14"
+                stroke="currentColor"
+                stroke-width="1.7"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              /></svg
+          ></span>
+        </div>
+        <ol id="leaderboard-list"></ol>
+        <p><i></i><span id="rival-count">12</span> rivals in the arena</p>
+      </aside>
+      <div id="world-hud" class="world-hud hidden">
+        <canvas
+          id="minimap"
+          width="140"
+          height="140"
+          aria-label="Arena minimap"
+        ></canvas>
+        <div>
+          <span class="eyebrow">THE AFTERGLOW</span>
+          <p id="world-status">Gather sparks. Keep moving.</p>
+        </div>
+      </div>
+      <div id="play-hint" class="play-hint hidden">
+        FOLLOW THE SPARKS <span>·</span> WATCH YOUR HEAD
+      </div>
+      <div id="boost-control" class="boost-control hidden">
+        <button id="boost-button" aria-label="Hold to boost">
+          <span>ϟ</span> BOOST <kbd>SPACE</kbd>
+        </button>
+        <div class="boost-track"><div id="boost-fill"></div></div>
+        <span id="boost-label">HOLD TO SURGE</span>
+      </div>
+      <div id="pickup-toast" class="pickup-toast" aria-hidden="true">+10</div>
+
+      <section
+        id="end-screen"
+        class="modal-screen hidden"
+        aria-labelledby="end-title"
+      >
+        <div class="result-card">
+          <span class="eyebrow"
+            >GAME OVER
+            <span class="tiny-star"
+              ><svg
+                class="inline-icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                aria-hidden="true"
+              >
+                <path
+                  d="M12 3v18M3 12h18M5.6 5.6l12.8 12.8M5.6 18.4 18.4 5.6"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                /></svg></span
+          ></span>
+          <h2 id="end-title">The glow<br />goes <em>on.</em></h2>
+          <p id="death-reason">
+            You crossed another coil. Let's find a new flow.
+          </p>
+          <div id="record-banner" class="record-banner hidden">
+            ✦ A NEW PERSONAL BEST ✦
+          </div>
+          <div class="result-stats">
+            <div>
+              <span>FINAL SPARKS</span><strong id="final-score">0</strong>
+            </div>
+            <div>
+              <span>PERSONAL BEST</span><strong id="final-best">0</strong>
+            </div>
+          </div>
+          <div class="round-detail">
+            <span><b id="final-food">0</b> sparks collected</span
+            ><span><b id="final-time">0:00</b> in the flow</span>
+          </div>
+          <button id="restart-button" class="primary-button" aria-label="Restart game">
+            Restart the chase
+            <span aria-hidden="true"
+              ><svg
+                class="inline-icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                aria-hidden="true"
+              >
+                <path
+                  d="M5 19 19 5M5 5h14v14"
+                  stroke="currentColor"
+                  stroke-width="1.7"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                /></svg
+            ></span></button
+          ><button id="home-button" class="text-button">
+            Back to the beginning
+          </button>
+        </div>
+      </section>
+      <section
+        id="pause-screen"
+        class="modal-screen hidden"
+        aria-labelledby="pause-title"
+      >
+        <div class="result-card pause-card">
+          <span class="eyebrow">TAKE A BREATHER</span>
+          <h2 id="pause-title">Hold that<br /><em>thought.</em></h2>
+          <p>Your arena is paused.</p>
+          <button id="resume-button" class="primary-button">
+            Back to the glow
+            <span aria-hidden="true"
+              ><svg
+                class="inline-icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                aria-hidden="true"
+              >
+                <path
+                  d="M5 19 19 5M5 5h14v14"
+                  stroke="currentColor"
+                  stroke-width="1.7"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                /></svg
+            ></span>
+          </button>
+          <p class="start-hint">
+            Press <kbd>P</kbd> or <kbd>ESC</kbd> to resume
+          </p>
+        </div>
+      </section>
+      <div id="loading-message" class="loading-message" role="status">
+        Lighting up the arena…
+      </div>
+      <noscript
+        ><div class="loading-message">
+          Enable JavaScript to play Prismcoil.
+        </div></noscript
+      >
+    </main>
+  </body>
+</html>
