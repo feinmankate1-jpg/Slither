@@ -2,6 +2,17 @@
 
 **Chase the glow.** An original, colorful snake survival game made with Phaser 3. Gather glowing sparks, grow your coil, and outlast twelve AI rivals in a large circular arena. All graphics are generated in code. No Slither.io assets, branding, or visual design are used.
 
+## Play in your browser
+
+[Play Prismcoil on GitHub Pages](https://feinmankate1-jpg.github.io/Slither/).
+
+1. Open the game in a modern desktop or mobile browser.
+2. Click or tap **Enter the arena**, or press **Space**. This interaction also enables audio.
+3. Steer toward glowing sparks to collect points and grow. Avoid other snakes' bodies and the arena rim. Hold the boost control for a temporary burst of speed.
+4. When you die, the Game Over screen shows your final score and personal best. Click or tap **Restart the chase**, or press **Space** or **Enter**, to start a new round.
+
+Use the **music-note button** to mute or unmute background music. Use the **speaker button** (or **M**) to mute or unmute sound effects independently.
+
 ## Play locally
 
 No dependency installation or build is required. From this directory:
@@ -10,24 +21,25 @@ No dependency installation or build is required. From this directory:
 python3 -m http.server 8000 --bind 0.0.0.0
 ```
 
-Open the server in your browser. Use an HTTP server rather than opening `index.html` as a file so audio loading works consistently.
+Open [http://localhost:8000/](http://localhost:8000/) on the computer running the server. For a remote development environment, open its forwarded server port. Use an HTTP server rather than opening `index.html` as a file so audio loading works consistently.
 
 ## Controls and rules
 
-| Action          | Desktop                                               | Touch                                            |
-| --------------- | ----------------------------------------------------- | ------------------------------------------------ |
-| Start / restart | Click the button or press Space (Enter also restarts) | Tap the button                                   |
-| Steer           | Move the mouse toward your destination                | Touch and drag toward your destination           |
-| Boost           | Hold the left mouse button or Space                   | Hold the Boost button; steer with another finger |
-| Pause / resume  | P, Escape, or the pause button                        | Pause / resume button                            |
-| Sound           | M or the speaker button                               | Speaker button                                   |
+| Action           | Desktop                                              | Touch                                            |
+| ---------------- | ---------------------------------------------------- | ------------------------------------------------ |
+| Start / restart  | Click the button or press Space (Enter also restarts) | Tap the button                                   |
+| Steer            | Move the mouse toward your destination               | Touch and drag toward your destination           |
+| Boost            | Hold the left mouse button or Space                  | Hold the Boost button; steer with another finger |
+| Pause / resume   | P, Escape, or the pause button                       | Pause / resume button                            |
+| Sound effects    | M or the speaker button                              | Speaker button                                   |
+| Background music | Music-note button                                    | Music-note button                                |
 
 - The snake moves continuously and turns smoothly. Your own body is safe to cross.
 - Ordinary sparks award **10 points**. Remains from eliminated snakes award **25 points**. Every 30 points adds a body segment, up to 200 segments; points can continue rising after this visual limit.
 - Boost lasts about 3.7 seconds on a full charge. Release to recharge. It never reduces your score or length.
 - Hit a rival's body head-first, or leave the arena rim, and your round ends immediately. Head-to-head collisions eliminate both snakes.
 - New snakes have a brief, visible spawn shield. AI rivals collect food, avoid hazards, leave edible remains when eliminated, and respawn after three seconds.
-- Restart resets your score, food, rivals, energy, timer, and length. Your personal best and sound preference are saved locally when browser storage is available.
+- Restart resets your score, food, rivals, energy, timer, and length. Your personal best and separate sound-effects/music mute preferences are saved locally when browser storage is available.
 - Switching tabs or losing focus pauses the round. No account, backend, or database is needed.
 
 ## Custom audio
@@ -50,12 +62,20 @@ Audio is initialized and resumed only after a click, tap, or keyboard interactio
 index.html               Accessible interface and entry point
 style.css                Responsive desktop/mobile interface
 src/game.js              Arena, AI, input, spatial grids, rendering, audio
-assets/audio/*.mp3       Replaceable sound effects
+assets/audio/*.mp3        Sound effects and background music
 assets/vendor/           Phaser 3.90.0 and its MIT license
 README.md
+PROMPT_LOG.md            Actual development prompts from the Codex conversation
+REFERENCES.md            Sources, audio credits, and tool acknowledgments
 ```
 
 The only runtime dependency is **Phaser 3.90.0**, bundled locally from its official npm package. Its license is at `assets/vendor/PHASER-LICENSE.txt`. There are no CDN requests, external images, fonts, analytics, or build tools. A modern browser with Canvas or WebGL and Web Audio is recommended; sound remains optional.
+
+## Assignment documentation and credits
+
+[PROMPT_LOG.md](PROMPT_LOG.md) records the actual user prompts available in the Codex conversation, including gameplay, rewards, damage, Game Over, sound effects, deployment, and background music. Confirmation replies are labeled separately; no missing prompts or ElevenLabs generation prompts are invented.
+
+The supplied background music was generated with **[ElevenLabs](https://elevenlabs.io/)**. The current reward, damage, and Game Over effects are synthesized placeholders. See [REFERENCES.md](REFERENCES.md) for audio credits, Phaser references, gameplay inspiration, and Codex assistance.
 
 ## GitHub Pages
 
